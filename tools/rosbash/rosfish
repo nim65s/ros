@@ -222,18 +222,19 @@ function rosls
     ls $rospath
 end
 
-# sets arg as return value
+# sets _roscmd_arg as return value
 function _roscmd
     set -l opt
+    set -l catkin_package_libexec_dir
     if test -n $CMAKE_PREFIX_PATH
-        set -l catkin_package_libexec_dir (catkin_find --without-underlays --libexec $argv[1] 2> /dev/null)
+        set catkin_package_libexec_dir (catkin_find --without-underlays --libexec $argv[1] 2> /dev/null)
     end
     set -l pkgdir (_ros_package_find $argv[1])
     if test -z $catkin_package_libexec_dir -a -z $pkgdir
         echo "Couldn't find package $argv[1]"
         return 1
     end
-    set -l exepath (find -L $catkin_package_libexec_dir $pkgdir -name $2 -type f ! -regex .*/[.].* ! -regex .*$pkgdir\/build\/.* | uniq)
+    set -l execpath (find -L $catkin_package_libexec_dir $pkgdir -name $argv[2] -type f ! -regex ".*/[.].*" ! -regex ".*$pkgdir\/build\/.*" | uniq)
     if test (count $execpath) = "0"
         echo "That file does not exist in that package."
         return 1
@@ -243,15 +244,15 @@ function _roscmd
             echo $i") " $execpath[i]
         end
         read choice
-        set -l opt $execpath[$choice]
+        set opt $execpath[$choice]
     else
-        set -l opt $exepath[1]
+        set opt $execpath
     end
-    arg=$opt
+    set _roscmd_arg $opt
 end
 
 function rosed
-    set -l arg
+    set -g _roscmd_arg
     if test (count $argv) = 0
        echo -e "usage: rossed [package] [file]\n\nEdit a file within a package."
        return 0
@@ -260,12 +261,12 @@ function rosed
        echo -e "usage: rossed [package] [file]\n\nEdit a file within a package."
        return 0
     end
-    _roscmd $argv[1]
-    if test -n $arg
+    _roscmd $argv
+    if test -n $_roscmd_arg
         if test -z $EDITOR
-            vi $arg
+            vi $_roscmd_arg
         else
-            $EDITOR $arg
+            eval $EDITOR $_roscmd_arg
         end
     end
 end
