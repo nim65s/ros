@@ -278,7 +278,7 @@ function roscp
         return 0
     end
     _roscmd $argv[1] $argv[2]
-    cp $arg $argv[3]
+    cp $_roscmd_arg $argv[3]
 end
 
 function _roscomplete
