@@ -9,7 +9,7 @@ function _rossed
 end
 
 function _rosfind
-    if  test (uname) = "Darwin" -o (uname) = "FreeBSD"
+    if test (uname) = "Darwin" -o (uname) = "FreeBSD"
         # BSD find needs -E for extended regexp
         find -E $argv
     else
@@ -95,8 +95,8 @@ function _ros_decode_path
     else
         set rosname $argv[1]
         if test (count $argv) != "2" -o $argv[2] != "forceeval"
-           echo $rosname
-           return 1
+            echo $rosname
+            return 1
         end
     end
 
@@ -153,7 +153,7 @@ function roscd
         end
         echo -e "Neither ROS_WORKSPACE is set nor a catkin workspace is listed in CMAKE_PREFIX_PATH.  Please set ROS_WORKSPACE or source a catkin workspace to use roscd with no arguments."
         return 1
-      end
+    end
 
     if test $argv[1] = "--help"
         echo -e "usage: roscd package\n\nJump to target package."
@@ -188,7 +188,8 @@ function rosd
     end
     set count 0
     for items in (dirs | sed -e 's/  /\n/g')
-        echo $count $items;
+        echo $count $items
+
         set count (expr $count + 1)
     end
 end
@@ -204,7 +205,7 @@ function rospd
         return 0
     end
     set -l rospath (_ros_decode_path $argv[1] forceeval)
-    pushd $rospath > /dev/null
+    pushd $rospath >/dev/null
     rosd
 end
 
@@ -254,12 +255,12 @@ end
 function rosed
     set -g _roscmd_arg
     if test (count $argv) = 0
-       echo -e "usage: rossed [package] [file]\n\nEdit a file within a package."
-       return 0
+        echo -e "usage: rossed [package] [file]\n\nEdit a file within a package."
+        return 0
     end
     if test $argv[1] = "--help"
-       echo -e "usage: rossed [package] [file]\n\nEdit a file within a package."
-       return 0
+        echo -e "usage: rossed [package] [file]\n\nEdit a file within a package."
+        return 0
     end
     _roscmd $argv
     if test -n $_roscmd_arg
@@ -273,7 +274,7 @@ end
 
 function roscp
     set -l arg
-    if test  (count $argv) != "3"
+    if test (count $argv) != "3"
         echo -e "usage: roscp package filename target\n\nCopy a file from a package to target location."
         return 0
     end
@@ -305,22 +306,22 @@ function _roscomplete_rosmake
     _roscomplete
     set options --test-only --all --mark-installed --unmark-installed --robust --build-everything --specified-only --buildtest --buildtest1 --output --pre-clean --bootstrap --disable-logging --target --pjobs= --threads --profile --skip-blacklist --status-rate
     for i in $options
-         echo $i
+        echo $i
     end
 end
 
 function _roscomplete_search_dir
     set -l command (commandline -o)
     if test (count $command) = 1
-        echo "1" >> ~/output.txt
+        echo "1" >>~/output.txt
         _ros_list_packages
     end
     if test (count $command) = 2
-        echo "2" >> ~/output.txt
+        echo "2" >>~/output.txt
         _ros_list_packages
     end
     if test (count $command) = 3
-        echo "3" >> ~/output.txt
+        echo "3" >>~/output.txt
         find (_ros_location_find $command[1]) $arg -printf "%f\n"
     end
 end
@@ -337,7 +338,7 @@ function _roscomplete_launch
     if test -z (commandline -ct | grep i-)
         set options --files --args --nodes --find-node --child --local --screen --server_uri --run_id --wait --port --core --pid --dump-params
         for i in $options
-             echo $i
+            echo $i
         end
     else
         _roscomplete_search_dir '-type f -regex \'.*\.launch$\' -o -type f -regex \'.*\.test$\''
